@@ -1,13 +1,12 @@
 #pragma once
 
-#include <moaicore/MOAIEntity2D.h>
-
 class Character;
 
 class SeekSteering
 {
 public:
-	SeekSteering(Character* character = nullptr, const USVec2D& targetPosition = {0,0});
+	SeekSteering();
+	SeekSteering(Character* character, std::vector<USVec2D> *path);
 	~SeekSteering();
 
 	USVec2D GetSteering();
@@ -15,7 +14,11 @@ public:
 
 private:
 	Character* mCharacter;
-	USVec2D mTargetPosition;
+	std::vector<USVec2D>* mPath;
+
+	USVec2D mTarget = USVec2D(0, 0);
+	USVec2D mTargetAhead = USVec2D(0, 0);
+	int mTargetIndex = 0;
 
 	USVec2D drawPos, drawVel, drawAcc;
 };
