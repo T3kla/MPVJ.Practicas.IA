@@ -19,6 +19,8 @@
     <ClCompile Include="pathfinding\pathfinder.cpp">
       <Filter>pathfinder</Filter>
     </ClCompile>
+    <ClCompile Include="seek_steering.cpp" />
+    <ClCompile Include="params.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="character.h" />
@@ -36,6 +38,8 @@
     <ClInclude Include="pathfinding\pathfinder.h">
       <Filter>pathfinder</Filter>
     </ClInclude>
+    <ClInclude Include="seek_steering.h" />
+    <ClInclude Include="params.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="host">

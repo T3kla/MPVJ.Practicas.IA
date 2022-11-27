@@ -8,6 +8,19 @@ layer = MOAILayer2D.new()
 layer:setViewport(viewport)
 MOAISim.pushRenderPass(layer)
 
+function drawBackground(image, sizeX, sizeY)
+    gfxQuad = MOAIGfxQuad2D.new()
+    gfxQuad:setTexture(image)
+    gfxQuad:setRect(-sizeX/2, -sizeY/2, sizeX/2, sizeY/2)
+    gfxQuad:setUVRect(0, 0, 1, 1)
+    prop = MOAIProp2D.new()
+    prop:setDeck(gfxQuad)
+    prop:setLoc(posX, posY)
+    layer:insertProp(prop)
+end
+
+drawBackground("background.png", 1024, 768)
+
 texture_name = "ghost32.png"
 gfxQuad = MOAIGfxQuad2D.new()
 gfxQuad:setTexture(texture_name)

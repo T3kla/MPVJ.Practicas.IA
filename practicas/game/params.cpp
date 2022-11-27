@@ -1,4 +1,5 @@
 #include <stdafx.h>
+
 #include "params.h"
 #include <tinyxml.h>
 
@@ -35,7 +36,7 @@ bool ReadParams(const char* filename, Params& params)
     paramElem = hParams.FirstChildElement("dest_radius").Element();
     if (paramElem)
         paramElem->Attribute("value", &params.dest_radius);
-    
+
     paramElem = hParams.FirstChildElement("arrive_radius").Element();
     if (paramElem)
         paramElem->Attribute("value", &params.arrive_radius);
@@ -50,27 +51,27 @@ bool ReadParams(const char* filename, Params& params)
     paramElem = hParams.FirstChildElement("max_angular_velocity").Element();
     if (paramElem)
         paramElem->Attribute("value", &params.max_angular_velocity);
-    
+
     paramElem = hParams.FirstChildElement("max_angular_acceleration").Element();
     if (paramElem)
         paramElem->Attribute("value", &params.max_angular_acceleration);
-    
+
     paramElem = hParams.FirstChildElement("angular_arrive_radius").Element();
     if (paramElem)
         paramElem->Attribute("value", &params.angular_arrive_radius);
-    
+
     paramElem = hParams.FirstChildElement("angular_dest_radius").Element();
     if (paramElem)
         paramElem->Attribute("value", &params.angular_dest_radius);
-    
+
     paramElem = hParams.FirstChildElement("targetRotation").Element();
     if (paramElem)
         paramElem->Attribute("value", &params.targetRotation);
-    
+
     paramElem = hParams.FirstChildElement("look_ahead").Element();
     if (paramElem)
         paramElem->Attribute("value", &params.look_ahead);
-    
+
     paramElem = hParams.FirstChildElement("time_ahead").Element();
     if (paramElem)
         paramElem->Attribute("value", &params.time_ahead);
@@ -78,44 +79,84 @@ bool ReadParams(const char* filename, Params& params)
     return true;
 }
 
-std::vector<USVec2D>* ReadPath(const char* filename)
+// NavMesh stuff
+
+NavMesh ReadNavMesh(const char *filename)
 {
+    NavMesh nav;
+
     TiXmlDocument doc(filename);
     if (!doc.LoadFile())
     {
         fprintf(stderr, "Couldn't read params from %s", filename);
-        return false;
+        return nav;
     }
 
     TiXmlHandle hDoc(&doc);
+    TiXmlElement *pElem;
 
-    TiXmlElement* pElem;
     pElem = hDoc.FirstChildElement().Element();
     if (!pElem)
     {
         fprintf(stderr, "Invalid format for %s", filename);
-        return false;
+        return nav;
     }
 
     TiXmlHandle hRoot(pElem);
-    TiXmlHandle hParams = hRoot.FirstChildElement("points");
 
-    auto paramElem = hParams.FirstChild().Element();
+    // Extract points
 
-    if (!paramElem)
-        return nullptr;
+    TiXmlHandle xPolygons = hRoot.FirstChildElement("polygons");
 
-    auto newPath = new std::vector<USVec2D>;
-    newPath->reserve(10);
+    auto *xPoly = xPolygons.FirstChild().ToElement();
 
-	while (paramElem != 0)
+    int polyCounter = 0;
+
+    while (xPoly != 0)
     {
-		auto point = USVec2D(0, 0);
-        paramElem->Attribute("x", &point.mX);
-        paramElem->Attribute("y", &point.mY);
-        newPath->push_back(point);
-        paramElem = paramElem->NextSiblingElement();
+        Polygon poly;
+        poly.id = polyCounter;
+
+        auto* xPoint = xPoly->FirstChildElement();
+
+        while (xPoint != 0)
+        {
+            auto p = USVec2D(0, 0);
+            xPoint->Attribute("x", &p.mX);
+            xPoint->Attribute("y", &p.mY);
+            poly.vertex.push_back(p);
+            xPoint = xPoint->NextSiblingElement();
+        }
+
+        polyCounter++;
+        nav.polygons.push_back(poly);
+        xPoly = xPoly->NextSiblingElement();
     }
 
-    return newPath;
+    // Extract links
+
+    TiXmlHandle xLinks = hRoot.FirstChildElement("links");
+
+    auto* xLink = xLinks.FirstChild().ToElement();
+
+    while (xLink != 0)
+    {
+        Link link;
+
+        auto* xEdge = xLink->FirstChildElement();
+
+        auto p = USVec2D(0, 0);
+        xEdge->Attribute("polygon", &link.a.id);
+        xEdge->Attribute("edgestart", &link.a.str);
+        xEdge->Attribute("edgeend", &link.a.end);
+        xEdge = xEdge->NextSiblingElement();
+        xEdge->Attribute("polygon", &link.b.id);
+        xEdge->Attribute("edgestart", &link.b.str);
+        xEdge->Attribute("edgeend", &link.b.end);
+
+        nav.links.push_back(link);
+        xLink = xLink->NextSiblingElement();
+    }
+
+    return nav;
 }

@@ -1,10 +1,10 @@
 #pragma once
 
-class Character;
+ class Character;
 
-class SeekSteering
+ class SeekSteering
 {
-public:
+ public:
 	SeekSteering();
 	SeekSteering(Character* character, std::vector<USVec2D> *path);
 	~SeekSteering();
@@ -12,7 +12,7 @@ public:
 	USVec2D GetSteering();
 	void DrawDebug();
 
-private:
+ private:
 	Character* mCharacter;
 	std::vector<USVec2D>* mPath;
 
@@ -21,5 +21,5 @@ private:
 	int mTargetIndex = 0;
 
 	USVec2D drawPos, drawVel, drawAcc;
-};
+ };
 

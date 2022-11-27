@@ -6,11 +6,9 @@
 
 struct Node
 {
-    char ch = '.';
     int y = -1;
     int x = -1;
-    int parentX = -1;
-    int parentY = -1;
+    vector<Node> adyacent;
     float gCost = FLT_MAX;
     float hCost = FLT_MAX;
     float fCost = FLT_MAX;
@@ -19,6 +17,11 @@ struct Node
 inline bool operator<(const Node &lhs, const Node &rhs)
 {
     return lhs.fCost < rhs.fCost;
+}
+
+inline bool operator==(const Node &lhs, const Node &rhs)
+{
+    return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
 class Pathfinder : public virtual MOAIEntity2D
@@ -44,6 +47,7 @@ class Pathfinder : public virtual MOAIEntity2D
     {
         return m_StartPosition;
     }
+
     const USVec2D &GetEndPosition() const
     {
         return m_EndPosition;
@@ -51,14 +55,9 @@ class Pathfinder : public virtual MOAIEntity2D
 
     bool PathfindStep();
 
-    bool IsValid(int x, int y);
-    bool IsDestination(int x, int y);
-
-    float CalculateH(int x, int y, Node dest);
-    float AddedCost(char ch);
+    bool IsDestination(Node node);
 
     vector<Node> CalculatePath(Node start, Node dest);
-    vector<Node> MakePath(Node dest);
 
     static vector<Node> *GetPath();
 

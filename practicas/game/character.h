@@ -1,7 +1,10 @@
 #ifndef __CHARACTER_H__
 #define __CHARACTER_H__
 
+#include <vector>
 #include <moaicore/MOAIEntity2D.h>
+#include "params.h"
+#include "seek_steering.h"
 
 class Character: public MOAIEntity2D
 {
@@ -22,11 +25,12 @@ public:
 	
 	USVec2D GetLinearVelocity() const { return mLinearVelocity;}
 	float GetAngularVelocity() const { return mAngularVelocity;}
-private:
+
+	Params mParams;
+	SeekSteering mSteering;
+
 	USVec2D mLinearVelocity;
 	float mAngularVelocity;
-	
-	
 	
 	// Lua configuration
 public:

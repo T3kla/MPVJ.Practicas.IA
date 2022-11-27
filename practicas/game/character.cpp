@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include "character.h"
+#include "pathfinding/pathfinder.h"
 
 Character::Character() : mLinearVelocity(0.0f, 0.0f), mAngularVelocity(0.0f)
 {
@@ -15,7 +16,7 @@ Character::~Character()
 
 void Character::OnStart()
 {
-
+	ReadParams("params.xml", mParams);
 }
 
 void Character::OnStop()
