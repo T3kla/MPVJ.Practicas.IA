@@ -27,7 +27,7 @@
 	auto pos = mCharacter->GetLoc();
 
 	// Calculate target position
-	if (mPath->size() < mTargetIndex - 1)
+	if (mPath->size() <= mTargetIndex - 1)
 		mTargetIndex = 0;
 
 	mTarget = mPath->at(mTargetIndex);
