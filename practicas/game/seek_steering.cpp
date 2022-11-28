@@ -11,11 +11,11 @@
 	: mCharacter(character)
 	, mPath(path)
 {
- }
+}
 
  SeekSteering::~SeekSteering()
 {
- }
+}
 
  USVec2D SeekSteering::GetSteering()
 {
@@ -27,6 +27,9 @@
 	auto pos = mCharacter->GetLoc();
 
 	// Calculate target position
+	if (mPath->size() < mTargetIndex - 1)
+		mTargetIndex = 0;
+
 	mTarget = mPath->at(mTargetIndex);
 
 	auto dir = mTarget - pos;

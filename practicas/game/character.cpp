@@ -2,11 +2,16 @@
 #include "character.h"
 #include "pathfinding/pathfinder.h"
 
+static Character* MainChar = nullptr;
+static vector<USVec2D> *Path = nullptr;
+
 Character::Character() : mLinearVelocity(0.0f, 0.0f), mAngularVelocity(0.0f)
 {
 	RTTI_BEGIN
 		RTTI_EXTEND (MOAIEntity2D)
 	RTTI_END
+
+	MainChar = this;
 }
 
 Character::~Character()
@@ -17,6 +22,7 @@ Character::~Character()
 void Character::OnStart()
 {
 	ReadParams("params.xml", mParams);
+	mSteering = SeekSteering(this, Pathfinder::GetPath());
 }
 
 void Character::OnStop()
@@ -26,6 +32,9 @@ void Character::OnStop()
 
 void Character::OnUpdate(float step)
 {
+	mLinearVelocity += mSteering.GetSteering() * step;
+
+	SetLoc(GetLoc() + mLinearVelocity * step);
 }
 
 void Character::DrawDebug()
@@ -33,12 +42,13 @@ void Character::DrawDebug()
 	MOAIGfxDevice& gfxDevice = MOAIGfxDevice::Get();
 	gfxDevice.SetPenColor(0.0f, 0.0f, 1.0f, 0.5f);
 
-	//MOAIDraw::DrawPoint(0.0f, 0.0f);
+	mSteering.DrawDebug();
 }
 
-
-
-
+void Character::Reset()
+{
+	//MainChar->SetLoc();
+}
 
 // Lua configuration
 

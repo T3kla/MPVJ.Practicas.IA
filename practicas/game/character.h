@@ -31,7 +31,9 @@ public:
 
 	USVec2D mLinearVelocity;
 	float mAngularVelocity;
-	
+
+	static void Reset();
+ 	
 	// Lua configuration
 public:
 	virtual void RegisterLuaFuncs(MOAILuaState& state);

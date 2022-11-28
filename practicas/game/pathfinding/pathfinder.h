@@ -6,42 +6,26 @@
 
 struct Node
 {
-    int y = -1;
-    int x = -1;
-    vector<Node> adyacent;
-    float gCost = FLT_MAX;
-    float hCost = FLT_MAX;
-    float fCost = FLT_MAX;
+    int id = -1;
+    USVec2D pos = { 0.f,0.f };
+    vector<Node *> connected;
 };
-
-inline bool operator<(const Node &lhs, const Node &rhs)
-{
-    return lhs.fCost < rhs.fCost;
-}
 
 inline bool operator==(const Node &lhs, const Node &rhs)
 {
-    return lhs.x == rhs.x && lhs.y == rhs.y;
+    return lhs.id == rhs.id && lhs.pos.mX == rhs.pos.mX && lhs.pos.mY == rhs.pos.mY;
 }
 
 class Pathfinder : public virtual MOAIEntity2D
 {
-  public:
+public:
     Pathfinder();
     ~Pathfinder();
 
     virtual void DrawDebug();
 
-    void SetStartPosition(float x, float y)
-    {
-        m_StartPosition = USVec2D(x, y);
-        UpdatePath();
-    }
-    void SetEndPosition(float x, float y)
-    {
-        m_EndPosition = USVec2D(x, y);
-        UpdatePath();
-    }
+    void SetStartPosition(float x, float y);
+    void SetEndPosition(float x, float y);
 
     const USVec2D &GetStartPosition() const
     {
@@ -53,13 +37,18 @@ class Pathfinder : public virtual MOAIEntity2D
         return m_EndPosition;
     }
 
-    bool PathfindStep();
-
     bool IsDestination(Node node);
 
-    vector<Node> CalculatePath(Node start, Node dest);
+    float CalculateH(USVec2D a, USVec2D b);
 
-    static vector<Node> *GetPath();
+    void Rec(Node* cur, vector<Node*> path, float pathFitness, vector<Node*>* bestPath, float* bestPathFitness);
+
+    vector<Node*> CalculatePath();
+
+    int ClosestNodeTo(vector<Node*> vec, USVec2D pos);
+    int ClosestNodeTo(vector<Node> vec, USVec2D pos);
+
+    static vector<USVec2D> *GetPath();
 
   private:
     void UpdatePath();
